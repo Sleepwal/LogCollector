@@ -1,0 +1,7 @@
+name: LogCollector V1.0 ServerApp
+file_path: ./demo/test.log
+kafka:
+  address:
+    - 127.0.0.1:9092
+    - 127.0.0.1:9093
+  topic: test_topic
