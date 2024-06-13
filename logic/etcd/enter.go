@@ -1,35 +1,36 @@
-package initialize
+package etcd
 
 import (
 	"LogCollector/logic/model"
 	"context"
 	"encoding/json"
+	"errors"
 	"github.com/sirupsen/logrus"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"time"
 )
 
-var client *clientv3.Client
+var (
+	ETCD_CLIENT *clientv3.Client // etcd连接器
+)
 
-func InitEtcd(endpoints []string) *clientv3.Client {
-	etcdClient, err := clientv3.New(clientv3.Config{
+func InitEtcd(endpoints []string) (err error) {
+	ETCD_CLIENT, err = clientv3.New(clientv3.Config{
 		Endpoints:   endpoints,
 		DialTimeout: 5 * time.Second,
 	})
 	if err != nil {
-		logrus.Error("etcd connect failed, err:", err)
-		return nil
+		return errors.New("etcd connect failed, err: " + err.Error())
 	}
 
-	client = etcdClient
-	return etcdClient
+	return nil
 }
 
 func GetConfig(key string) (collects []model.CollectConfig, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
-	resp, err := client.Get(ctx, key)
+	resp, err := ETCD_CLIENT.Get(ctx, key)
 	if err != nil {
 		logrus.Errorf("etcd get key:%s failed, err:%v", key, err)
 		return

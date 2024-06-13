@@ -1,6 +1,7 @@
-package model
+package tail
 
 import (
+	"LogCollector/logic/kafka"
 	"fmt"
 	"github.com/IBM/sarama"
 	"github.com/hpcloud/tail"
@@ -10,8 +11,8 @@ import (
 )
 
 type TailTask struct {
-	path  string `json:"path"`
-	topic string `json:"topic"`
+	Path  string `json:"path"`
+	Topic string `json:"topic"`
 	tObj  *tail.Tail
 }
 
@@ -31,21 +32,21 @@ func NewTailTask(path, topic string) (task *TailTask, err error) {
 	}
 
 	task = &TailTask{
-		path:  path,
-		topic: topic,
+		Path:  path,
+		Topic: topic,
 		tObj:  tailFile,
 	}
 
 	return
 }
 
-func (t *TailTask) Run(MsgChan chan *sarama.ProducerMessage) {
+func (t *TailTask) Run() {
 	// 循环读取日志
-	logrus.Info("start tail file: ", t.path)
+	logrus.Info("start tail file: ", t.Path)
 	for {
 		line, ok := <-t.tObj.Lines // 从通道中读取日志（Lines chan *Line）
 		if !ok {
-			logrus.Warn("tail file closed, reopen ", t.path)
+			logrus.Warn("tail file closed, reopen ", t.Path)
 			time.Sleep(time.Second) // 读取失败，等待1秒钟重新打开
 			continue
 		}
@@ -55,10 +56,10 @@ func (t *TailTask) Run(MsgChan chan *sarama.ProducerMessage) {
 
 		// 把一行日志封装成消息
 		msg := &sarama.ProducerMessage{}
-		msg.Topic = t.topic
+		msg.Topic = t.Topic
 		msg.Value = sarama.StringEncoder(line.Text)
 		// 发送消息到通道
-		MsgChan <- msg
+		kafka.MSG_CHAN <- msg
 		fmt.Println("message: ", line.Text)
 	}
 }

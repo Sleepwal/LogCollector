@@ -9,8 +9,8 @@ import "LogCollector/global"
 func SendMsg() {
 	for {
 		select {
-		case msg := <-global.MSG_CHAN:
-			partition, offset, err := global.KAFKA_CONNECTOR.SendMessage(msg)
+		case msg := <-MSG_CHAN:
+			partition, offset, err := KAFKA_CONNECTOR.SendMessage(msg)
 			if err != nil {
 				global.LOG.Warn("send message failed, err: ", err)
 				return
