@@ -1,8 +1,12 @@
 name: LogCollector V1.0 ServerApp
-file_path: ./demo/test.log
+file_path: ./demo/web.log
 kafka:
   address:
     - 127.0.0.1:9092
     - 127.0.0.1:9093
   topic: test_topic
   chan_size: 1000
+etcd:
+  endpoints:
+    - 127.0.0.1:2379
+  collect_key: log_collector

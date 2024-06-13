@@ -1,12 +1,12 @@
-package initial
+package initialize
 
 import (
 	"github.com/sirupsen/logrus"
 )
 
-// InitLogger
+// Logger
 // @Description: 初始化日志
-func InitLogger() *logrus.Logger {
+func Logger() *logrus.Logger {
 	logger := logrus.New()
 	logger.SetLevel(logrus.InfoLevel)
 	return logger
