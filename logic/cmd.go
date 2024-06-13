@@ -2,6 +2,7 @@ package logic
 
 import (
 	"LogCollector/global"
+	"LogCollector/kafka"
 	"fmt"
 	"github.com/IBM/sarama"
 	"time"
@@ -11,7 +12,8 @@ import (
 // @Description: 业务逻辑
 // @return error
 func Run() error {
-	go sendMsg() // 启动发送消息的协程
+	go sendMsg()                                   // 启动发送消息的协程
+	go kafka.ReceiveFromKafka(global.CONFIG.Topic) // 启动从Kafka接收消息的协程
 
 	// 循环读取日志
 	for {
