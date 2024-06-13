@@ -5,3 +5,4 @@ kafka:
     - 127.0.0.1:9092
     - 127.0.0.1:9093
   topic: test_topic
+  chan_size: 1000
