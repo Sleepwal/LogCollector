@@ -1,6 +1,7 @@
 package etcd
 
 import (
+	"LogCollector/global"
 	"LogCollector/logic/model"
 	"context"
 	"encoding/json"
@@ -22,6 +23,8 @@ func InitEtcd(endpoints []string) (err error) {
 	if err != nil {
 		return errors.New("etcd connect failed, err: " + err.Error())
 	}
+
+	go WatchConfig(global.CONFIG.EtcdConfig.CollectKey)
 
 	return nil
 }

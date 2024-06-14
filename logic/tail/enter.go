@@ -2,16 +2,18 @@ package tail
 
 import (
 	"LogCollector/logic/model"
-	"github.com/hpcloud/tail"
 	"github.com/sirupsen/logrus"
 )
 
-var TAIL *tail.Tail // 读取日志工具
-
 func InitTail(collectConfigs []model.CollectConfig) {
+	taskMgr = &TailTaskMgr{
+		TailTasks:      make(map[string]*TailTask, 20),
+		CollectConfigs: collectConfigs,
+		ConfigChan:     make(chan []model.CollectConfig),
+	}
+
 	// 每一个配置，创建一个tail
 	for _, cfg := range collectConfigs {
-
 		// 创建日志收集任务
 		task, err := NewTailTask(cfg.Path, cfg.Topic)
 		if err != nil {
@@ -19,8 +21,12 @@ func InitTail(collectConfigs []model.CollectConfig) {
 			continue
 		}
 
+		// 存储tailTask任务
+		taskMgr.TailTasks[task.Path] = task
 		go task.Run()
 	}
 
+	// 监听，获取新配置
+	go taskMgr.Watch()
 	return
 }

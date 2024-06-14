@@ -10,6 +10,16 @@ import (
 )
 
 func main() {
+	initOthers()
+
+	err := logic.Run()
+	if err != nil {
+		logrus.Info("server run error: ", err)
+		return
+	}
+}
+
+func initOthers() {
 	// 1.初始化kafka连接
 	err := kafka.InitKafka(global.CONFIG.KafKaConfig)
 	if err != nil {
@@ -23,6 +33,7 @@ func main() {
 	err = etcd.InitEtcd(global.CONFIG.EtcdConfig.Endpoints)
 	if err != nil {
 		global.LOG.Error(err)
+		return
 	}
 
 	// 3.初始化tail
@@ -32,10 +43,4 @@ func main() {
 		return
 	}
 	tail.InitTail(collectConfigs)
-
-	err = logic.Run()
-	if err != nil {
-		logrus.Info("server run error: ", err)
-		return
-	}
 }
