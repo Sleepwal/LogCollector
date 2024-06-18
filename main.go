@@ -4,6 +4,7 @@ import (
 	"LogCollector/global"
 	"LogCollector/logic"
 	"LogCollector/logic/etcd"
+	"LogCollector/logic/influx"
 	"LogCollector/logic/kafka"
 	"LogCollector/logic/tail"
 	"github.com/sirupsen/logrus"
@@ -43,4 +44,7 @@ func initOthers() {
 		return
 	}
 	tail.InitTail(collectConfigs)
+
+	// 4.初始化influxdb数据
+	influx.WriteSystemInfo()
 }
