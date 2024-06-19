@@ -19,3 +19,7 @@
 - [x] 将数据发送到Kafka中。
 - [x] 收集系统信息，发送到Influxdb中。
 - [x] 使用grafana展示系统信息。
+
+## 项目流程
+
+![img.png](assets/流程图.png)
